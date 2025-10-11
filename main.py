@@ -6,6 +6,8 @@ import os
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, PlainTextResponse, JSONResponse
 
+#from sklearn import LinearRegression
+
 app = FastAPI(title="Housing Price Predictor")
 
 BASE_DIR = os.path.dirname(__file__)
@@ -70,7 +72,7 @@ async def predict(inp: InputModel):
 @app.get('/source/{filename}')
 async def source_file(filename: str):
     allowed = {
-        'Housing_price_predict.py': os.path.join(BASE_DIR, 'Housing_price_predict.py'),
+        'Housing_price_predictor.py': os.path.join(BASE_DIR, 'Housing_price_predictor.py'),
         'Housing_price_predictor.py': os.path.join(BASE_DIR, 'Housing_price_predictor.py'),
     }
     if filename not in allowed:
