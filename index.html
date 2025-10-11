@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Housing Price Predictor</title>
+  <style>
+    :root{--bg:#ffffff;--card:#ffffff;--muted:#374151;--accent:#0ea5a3;--glass:rgba(2,6,23,0.04);--card-border:#e6eef6}
+    *{box-sizing:border-box;font-family:Inter,Segoe UI,Helvetica,Arial,sans-serif}
+    body{margin:0;background:var(--bg);color:#0f1724;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
+    .wrap{max-width:920px;width:100%}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    header h1{margin:0;font-size:20px}
+    .grid{display:grid;grid-template-columns:1fr 340px;gap:20px}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,36,0.06);border:1px solid var(--card-border)}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    .row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px}
+    input[type=number],select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef6;background:transparent;color:inherit}
+    .small{font-size:13px;color:var(--muted)}
+    button{background:linear-gradient(90deg,var(--accent),#06b6d4);padding:10px 14px;border-radius:10px;border:0;color:#ffffff;font-weight:600;cursor:pointer}
+    .result{font-size:20px;font-weight:700;margin-top:12px;color:#0f1724}
+    .hint{font-size:13px;color:var(--muted);margin-top:8px}
+    footer{margin-top:14px;color:var(--muted);font-size:12px}
+    @media(max-width:880px){.grid{grid-template-columns:1fr} .row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <rect x="2" y="3" width="20" height="14" rx="2" fill="#071a2a"/>
+        <path d="M3 10h18" stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>Housing Price Predictor</h1>
+        <div class="small">Simple model UI — enter property features and get an instant estimate</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <form id="frm" class="card" onsubmit="return onSubmit(event)">
+        <div class="row">
+          <div>
+            <label for="area">Area (sq ft)</label>
+            <input id="area" name="area" type="number" min="1" step="0.1" value="1000" required />
+          </div>
+          <div>
+            <label for="bedrooms">Bedrooms (0–4)</label>
+            <input id="bedrooms" name="bedrooms" type="number" min="0" max="4" value="3" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="bathrooms">Bathrooms (0–4)</label>
+            <input id="bathrooms" name="bathrooms" type="number" min="0" max="4" value="2" required />
+          </div>
+          <div>
+            <label for="stories">Stories (0–4)</label>
+            <input id="stories" name="stories" type="number" min="0" max="4" value="1" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="mainroad">Mainroad (0–4)</label>
+              <input id="mainroad" name="mainroad" type="number" min="0" max="4" value="1" required />
+            </select>
+          </div>
+          <div>
+            <label for="guestroom">Guestroom (0–4)</label>
+            <input id="guestroom" name="guestroom" type="number" min="0" max="4" value="1" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="basement">Basement (0–4)</label>
+            <input id="basement" name="basement" type="number" min="0" max="4" value="0" required />
+          </div>
+          <div>
+            <label for="hotwaterheating">Hot water heating (0–4)</label>
+            <input id="hotwaterheating" name="hotwaterheating" type="number" min="0" max="4" value="0" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="airconditioning">Air conditioning (0/1)</label>
+            <select id="airconditioning" name="airconditioning"><option value="0">0</option><option value="1">1</option></select>
+          </div>
+          <div>
+            <label for="parking">Parking (0–4)</label>
+            <input id="parking" name="parking" type="number" min="0" max="4" value="1" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="prefare">Prefare (0–4)</label>
+            <input id="prefare" name="prefare" type="number" min="0" max="4" value="0" required />
+          </div>
+          <div>
+            <label for="furnishingstatus">Furnishing status (1=Unfurnished,2=Semi,3=Furnished)</label>
+            <select id="furnishingstatus" name="furnishingstatus">
+              <option value="1">1 — Unfurnished</option>
+              <option value="2">2 — Semi-furnished</option>
+              <option value="3">3 — Furnished</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+          <button type="submit">Estimate Price</button>
+          <div id="status" class="small" aria-live="polite"></div>
+        </div>
+
+        <div class="result" id="result" style="display:none">Estimated price: <span id="price"></span></div>
+        <div class="hint">Tip: values are validated client-side. Server-side validation will also run.</div>
+      </form>
+
+      <aside class="card">
+        <h3 style="margin-top:0">About</h3>
+        <p class="small">This interface calls the server-side regression model (pickled) and returns a numeric estimate. Use realistic inputs for best results.</p>
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0" />
+        <div class="small"><strong>Features sent:</strong> area, bedrooms, bathrooms, stories, mainroad, guestroom, basement, hotwaterheating, airconditioning, parking, prefare, furnishingstatus</div>
+        <footer>Local demo — predictions are for demonstration only.</footer>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('frm');
+    const status = document.getElementById('status');
+    const result = document.getElementById('result');
+    const priceEl = document.getElementById('price');
+
+    async function onSubmit(e){
+      e.preventDefault();
+      status.textContent = '';
+      result.style.display = 'none';
+
+      const data = Object.fromEntries(new FormData(form).entries());
+      // Convert numeric strings
+      for(const k in data){
+        data[k] = Number(data[k]);
+      }
+
+      // Basic client-side validation
+      if(!(data.area > 0)) return status.textContent = 'Area must be > 0';
+
+      status.textContent = 'Contacting server...';
+      try{
+        const resp = await fetch('/predict', {
+          method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data)
+        });
+        if(!resp.ok){
+          const txt = await resp.text();
+          status.textContent = 'Server error: ' + txt;
+          return;
+        }
+        const json = await resp.json();
+        const p = Number(json.prediction);
+        priceEl.textContent = new Intl.NumberFormat(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0}).format(p);
+        result.style.display = 'block';
+        status.textContent = '';
+      }catch(err){
+        status.textContent = 'Request failed: ' + err.message;
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>
