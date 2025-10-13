@@ -160,7 +160,7 @@
         }
         const json = await resp.json();
         const p = Number(json.prediction);
-        priceEl.textContent = new Intl.NumberFormat(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0}).format(p);
+        priceEl.textContent = new Intl.NumberFormat(undefined,{style:'currency',currency:'CAD',maximumFractionDigits:0}).format(p);
         result.style.display = 'block';
         status.textContent = '';
       }catch(err){
