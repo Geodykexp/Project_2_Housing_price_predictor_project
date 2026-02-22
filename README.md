@@ -97,37 +97,9 @@ Request body (JSON)
   "prefare": integer (0–4),
   "furnishingstatus": integer (0–4)
 }
-```
 
-Example
-```
-POST /predict
-Content-Type: application/json
 
-{
-  "area": 1200,
-  "bedrooms": 3,
-  "bathrooms": 2,
-  "stories": 1,
-  "mainroad": 1,
-  "guestroom": 0,
-  "basement": 0,
-  "hotwaterheating": 0,
-  "airconditioning": 1,
-  "parking": 1,
-  "prefare": 0,
-  "furnishingstatus": 2
-}
-```
-
-Response
-```
-{
-  "prediction": 123456.78
-}
-```
-
-Validation
+## Input Validation
 - Server-side validation uses Pydantic (see InputModel in main.py)
 - area must be > 0; integer fields are constrained between 0 and 4
 
