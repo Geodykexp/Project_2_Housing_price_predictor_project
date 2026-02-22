@@ -97,9 +97,10 @@ Request body (JSON)
   "prefare": integer (0–4),
   "furnishingstatus": integer (0–4)
 }
-
+```
 
 ## Input Validation
+
 - Server-side validation uses Pydantic (see InputModel in main.py)
 - area must be > 0; integer fields are constrained between 0 and 4
 
