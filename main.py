@@ -52,8 +52,8 @@ FEATURES: List[str] = [
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     path = os.path.join(BASE_DIR, "index.html")
-    if not os.path.exists(path):
-        raise HTTPException(status_code=404, detail="index.html not found")
+    # if not os.path.exists(path):
+    #     raise HTTPException(status_code=404, detail="index.html not found")
     with open(path, "r", encoding="utf-8") as f:
         return HTMLResponse(f.read())
 
